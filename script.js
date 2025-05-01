@@ -1,12 +1,12 @@
 let canvas = document.getElementById(`canvas`);
 let ctx = canvas.getContext(`2d`);
 
-canvas.width = window.innerWidth;
+canvas.width = 2000;
 canvas.height = window.innerHeight;
 const valorGrama = canvas.height *0.3;
 var horizontal = canvas.width*0.1;
 var vertical = canvas.height*0.65;
-var velocidade = 25;
+var velocidade = 10;
 var horizontalAreaDaMadeira = canvas.width-375;
 var verticalAreaDaMadeira = canvas.height-470;
 var invisivel = 0;
@@ -26,6 +26,10 @@ const valorWidth = canvas.width/20;
 var item1Preco = `20`;
 var item2Preco = `130`;
 var item3Preco = `500`;
+
+let ladoLinha1 =76;
+let ladoLinha2 = 120;
+let ladoLinha3 = 110;
 
 
 function drawScene(){
@@ -135,14 +139,22 @@ ctx.beginPath();
 ctx.fillStyle=`red`;
 ctx.fillRect(horizontal + ladoMochila, vertical+30, 20,25);
 
-//caboDoMachado
+//cabo Do Machado
 ctx.save();
-ctx.translate(horizontal + ladoMachado + 5, vertical + 30);
-
-ctx.rotate(Math.PI / rotacaoMachado);
-ctx.fillStyle =`rgb(114, 81, 19)`;
-ctx.fillRect(-5, -10, 10, 35); // -5 para centralizar após o translate
+ctx.translate(horizontal + ladoMachado + 5, vertical + 30); 
+ctx.rotate(Math.PI / rotacaoMachado);// roda o cabo
+ctx.fillStyle =`${caboOn}`;
+ctx.fillRect(-5, -20, 10, 55);
 ctx.restore();
+
+//ponta do machado
+
+ctx.beginPath();
+ctx.moveTo(horizontal + ladoLinha1, vertical + 18);
+ctx.lineTo(horizontal + ladoLinha2,vertical +32);
+ctx.lineTo(horizontal + ladoLinha3, vertical +50);
+ctx.fillStyle = `${tipoMachado}`;
+ctx.fill();
 
 }
 
@@ -152,6 +164,12 @@ const keyboard = {
     KeyA: false,
     KeyD: false,
     Space: false,
+
+    //mover com as setas
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
 };
 
 
@@ -170,87 +188,113 @@ document.addEventListener('keyup', (event) => {
 });
 
 function update() {
-    if (keyboard.KeyW){
-     vertical -= velocidade;  // Cima W
-    }
-    if (keyboard.KeyS){ 
-        vertical += velocidade; // Baixo S
-
-    } 
-    if (keyboard.KeyA){
-         horizontal -= velocidade; // Esquerda A
-         ladoMochila = 69;
-         ladoMadeira = 71;
-         ladoMachado = -20;
-         rotacaoMachado = -5;
-
+        if (keyboard.KeyW || keyboard.ArrowUp){
+        vertical -= velocidade;  // Cima W
+        }
+        if (keyboard.KeyS || keyboard.ArrowDown){ 
+            vertical += velocidade; // Baixo S
+            
         } 
-    if (keyboard.KeyD){ 
-        horizontal += velocidade;  // Direita D
-        ladoMochila = -20;
-        ladoMadeira = -18;
-        ladoMachado = 80;
-        rotacaoMachado = 5;
+        if (keyboard.KeyA || keyboard.ArrowLeft){
+            horizontal -= velocidade; // Esquerda A
+            ladoMochila = 69;
+            ladoMadeira = 71;
+            ladoMachado = -20;
+            rotacaoMachado = -5;
+            ladoLinha1 = -10;
+            ladoLinha2 = -50;
+            ladoLinha3 = -40;
 
-    }
-    
-    if(vertical>canvas.height-95){
-        vertical -=velocidade;
-    }
-    if(vertical < 0){
-        vertical +=velocidade;
+            } 
+        if (keyboard.KeyD || keyboard.ArrowRight){ 
+            horizontal += velocidade;  // Direita D
+            ladoMochila = -20;
+            ladoMadeira = -18;
+            ladoMachado = 80;
+            rotacaoMachado = 5;
+            ladoLinha1 =76;
+            ladoLinha2 = 120;
+            ladoLinha3 = 110;
+            
+        }
+
+        //nao deixa o botão ficar sendo apertado com spaço e enter
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => btn.blur());
+        });
+
         
-
-    }
-    if(horizontal>canvas.width-95){
-        horizontal -=velocidade;
-    }
-    if(horizontal < 0){
-        horizontal +=velocidade;
-
-    }
- 
-    if(horizontal > horizontalAreaDaMadeira && horizontal < horizontalAreaDaMadeira + 250 && vertical > verticalAreaDaMadeira && vertical < verticalAreaDaMadeira + 370 &&  keyboard.Space){
+        if(vertical>canvas.height-95){
+            vertical -=velocidade;
+        }
+        if(vertical < 0){
+            vertical +=velocidade;
+            
+            
+        }
+        if(horizontal>canvas.width-95){
+            horizontal -=velocidade;
+        }
+        if(horizontal < 0){
+            horizontal +=velocidade;
+            
+        }
     
-        if(invisivel == 0){
-            if (meioDia >= 10){
-                meioDia +=1;
-                madeira +=1;
-                solHeight += valorHeight;
-                solWidth += valorWidth;
-            }else{
-                meioDia +=1;
-                solHeight -= valorHeight;
-                solWidth += valorWidth;
-            }
-            if(meioDia >= 20){
-                canvas.style.backgroundColor = `rgb(5, 2, 86)`;
-            }
-            if(meioDia == 30){
-                solHeight = canvas.height-valorGrama;
-                solWidth = 0;
-                canvas.style.backgroundColor = `rgb(88, 88, 235)`;
+        if(horizontal > horizontalAreaDaMadeira && horizontal < horizontalAreaDaMadeira + 250 && vertical > verticalAreaDaMadeira && vertical < verticalAreaDaMadeira + 370 &&  keyboard.Space){
+            
+            if(invisivel == 0){
+                if (meioDia >= 10){
+                    meioDia +=1;
+                    madeira +=1;
+                    solHeight += valorHeight;
+                    solWidth += valorWidth;
+                }else{
+                    meioDia +=1;
+                    solHeight -= valorHeight;
+                    solWidth += valorWidth;
+                }
+                if(meioDia >= 20){
+                    canvas.style.backgroundColor = `rgb(5, 2, 86)`;
+                }
+                if(meioDia == 30){
+                    solHeight = canvas.height-valorGrama;
+                    solWidth = 0;
+                    canvas.style.backgroundColor = `rgb(88, 88, 235)`;
+                    
+                    meioDia = 0;
+                }
                 
-                meioDia = 0;
+                invisivel = 1;
+                
             }
             
-            invisivel = 1;
-            
-        }
-        
-    }
-    if (horizontal > horizontalAreaGuardarMadeira-80 && horizontal < horizontalAreaGuardarMadeira + 230 &&
-        vertical > verticalAreaGuardarMadeira -30 && vertical < verticalAreaGuardarMadeira + 340 && keyboard.Space) {
-            if (invisivel == 1) {
-                invisivel = 0;    
-                madeira +=70;
             }
-        }
+        if (horizontal > horizontalAreaGuardarMadeira-80 && horizontal < horizontalAreaGuardarMadeira + 230 &&
+            vertical > verticalAreaGuardarMadeira -30 && vertical < verticalAreaGuardarMadeira + 340 && keyboard.Space) {
+                if (invisivel == 1) {
+                    invisivel = 0;
+                    if(machadoEquipado === 3){
+                        madeira += 5000
+                    }else if(machadoEquipado === 2){
+                        madeira +=70;
+                    }else if(machadoEquipado === 1){
+                        madeira += 30;
+                    }else{
+                        madeira += 10;
+                    }
+                }
+            }
+            
+        drawScene();
+        requestAnimationFrame(update);
 
-    drawScene();
-    requestAnimationFrame(update);
-}
-let divStatus = document.getElementById(`status`);
+        window.scrollTo({
+            left: horizontal - window.innerWidth / 2 + 35,
+            top: 0,
+            behavior: 'auto'
+        });
+    }
+    let divStatus = document.getElementById(`status`);
 function updateStatus(){
     divStatus.innerText = `Lenha: ${madeira}`
 
@@ -277,7 +321,7 @@ function abrirMenu(){
        }else{
         menuOpcao.style.display = `flex`;
         menuAberto = true;
-       }
+    }
     
 }
 
@@ -299,7 +343,9 @@ function lojaMachado(){
 let machadoDeMadeira = false;
 let machadoDePedra = false;
 let machadoDeDiamante = false;
-let machadoEquipado = null;
+let machadoEquipado = 0;
+let caboOn = `rgba(114, 81, 19, ${machadoEquipado})`;
+let tipoMachado = `transparent`;
 
 function comprarItem1(){
     if(madeira>=item1Preco && !machadoDeMadeira ){
@@ -307,7 +353,9 @@ function comprarItem1(){
         machadoDeMadeira = true;
     }
     if(machadoDeMadeira){
-        machadoEquipado = `machadoDeMadeira`;
+        machadoEquipado = 1;
+        caboOn = `rgba(114, 81, 19, ${machadoEquipado})`;
+        tipoMachado = `rgb(68, 51, 8)`;
     }
 }
 
@@ -317,7 +365,10 @@ function comprarItem2(){
         machadoDePedra = true;
     }
     if(machadoDePedra){
-        machadoEquipado = `machadoDePedra`;
+        machadoEquipado = 2;
+        caboOn = `rgba(114, 81, 19, ${machadoEquipado})`;
+        tipoMachado = `rgb(51, 51, 51)`;
+
     }
 }
 
@@ -327,7 +378,9 @@ function comprarItem3(){
         machadoDeDiamante = true;
     }
     if(machadoDeDiamante){
-        machadoEquipado = `machadoDeDiamante`;
+        machadoEquipado = 3;
+        caboOn = `rgba(114, 81, 19, ${machadoEquipado})`;
+        tipoMachado = `rgb(0, 232, 220)`;
     }
 }
 
@@ -335,6 +388,6 @@ function comprarItem3(){
 
 
 
-setInterval(updateStatus, 1000);
+setInterval(updateStatus, 500);
 drawScene();
 update();

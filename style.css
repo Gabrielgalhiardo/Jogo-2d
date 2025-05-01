@@ -1,13 +1,19 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
-    overflow: hidden; 
+    width: 2000px;
+    overflow: hidden;
 }
 
 canvas{
     display: block;
     background-color: rgb(88, 88, 235);
+}
+
+
+button:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 #compras{
@@ -38,6 +44,13 @@ canvas{
 #menubotao:hover{
     transition: 300ms;
     background-color: rgb(116, 10, 116);
+
+}
+
+#menubotao:active{
+    scale: 0.95;
+    transition: 300ms;
+    background-color: rgb(95, 5, 86);
 
 }
 
@@ -100,4 +113,14 @@ canvas{
     border-radius: 15%;
     font-weight: bold;
     font-size: 20px;
+}
+
+#menuStatus{
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    position: absolute;
+    top: 14%;
+    left: 90%;
+    background-color: green;
 }
