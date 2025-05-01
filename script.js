@@ -6,12 +6,15 @@ canvas.height = window.innerHeight;
 const valorGrama = canvas.height *0.3;
 var horizontal = canvas.width*0.1;
 var vertical = canvas.height*0.65;
-var velocidade = 5;
+var velocidade = 25;
 var horizontalAreaDaMadeira = canvas.width-375;
 var verticalAreaDaMadeira = canvas.height-470;
 var invisivel = 0;
 var ladoMochila = -20;
 var ladoMadeira = -18;
+var ladoMachado = 80;
+var rotacaoMachado = 5;
+
 var solWidth = 0;
 var solHeight= canvas.height-valorGrama;
 var madeira = 0;
@@ -20,6 +23,9 @@ var horizontalAreaGuardarMadeira = 250;
 var verticalAreaGuardarMadeira = valorGrama + 220;
 const valorHeight = (canvas.height)/20 ;
 const valorWidth = canvas.width/20;
+var item1Preco = `20`;
+var item2Preco = `130`;
+var item3Preco = `500`;
 
 
 function drawScene(){
@@ -129,33 +135,16 @@ ctx.beginPath();
 ctx.fillStyle=`red`;
 ctx.fillRect(horizontal + ladoMochila, vertical+30, 20,25);
 
+//caboDoMachado
+ctx.save();
+ctx.translate(horizontal + ladoMachado + 5, vertical + 30);
 
-//tabela Info
-ctx.beginPath();
-ctx.fillStyle = `rgb(64, 63, 63)`;
-roundedRect(ctx, 0, canvas.height * 0.4, 150, 75, 10);
-
-//madeiras Total
-ctx.fillStyle = `white`;
-ctx.font = '20px Arial';
-ctx.textAlign = `center`;
-ctx.fillText(`Lenhas: ${madeira} 🪵`,75,canvas.height * 0.46)
-
-
-
+ctx.rotate(Math.PI / rotacaoMachado);
+ctx.fillStyle =`rgb(114, 81, 19)`;
+ctx.fillRect(-5, -10, 10, 35); // -5 para centralizar após o translate
+ctx.restore();
 
 }
-
-function roundedRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
-    ctx.fill();
-  }
 
 const keyboard = {
     KeyW: false,
@@ -192,11 +181,17 @@ function update() {
          horizontal -= velocidade; // Esquerda A
          ladoMochila = 69;
          ladoMadeira = 71;
+         ladoMachado = -20;
+         rotacaoMachado = -5;
+
         } 
     if (keyboard.KeyD){ 
         horizontal += velocidade;  // Direita D
         ladoMochila = -20;
         ladoMadeira = -18;
+        ladoMachado = 80;
+        rotacaoMachado = 5;
+
     }
     
     if(vertical>canvas.height-95){
@@ -225,7 +220,6 @@ function update() {
                 solWidth += valorWidth;
             }else{
                 meioDia +=1;
-                madeira +=1;
                 solHeight -= valorHeight;
                 solWidth += valorWidth;
             }
@@ -236,25 +230,111 @@ function update() {
                 solHeight = canvas.height-valorGrama;
                 solWidth = 0;
                 canvas.style.backgroundColor = `rgb(88, 88, 235)`;
-
+                
                 meioDia = 0;
             }
             
             invisivel = 1;
-           
+            
         }
- 
+        
     }
     if (horizontal > horizontalAreaGuardarMadeira-80 && horizontal < horizontalAreaGuardarMadeira + 230 &&
         vertical > verticalAreaGuardarMadeira -30 && vertical < verticalAreaGuardarMadeira + 340 && keyboard.Space) {
-        if (invisivel == 1) {
-            invisivel = 0;    
+            if (invisivel == 1) {
+                invisivel = 0;    
+                madeira +=70;
+            }
         }
-    }
 
     drawScene();
     requestAnimationFrame(update);
 }
+let divStatus = document.getElementById(`status`);
+function updateStatus(){
+    divStatus.innerText = `Lenha: ${madeira}`
 
+    if(madeira>=item1Preco){
+        item1.style.color = `rgb(2, 134, 13)`;
+        if(madeira>=item2Preco){
+            item2.style.color = `rgb(2, 134, 13)`;
+            if(madeira>=item3Preco){
+                item3.style.color = `rgb(2, 134, 13)`;
+            }
+        }
+    }
+}
+
+
+let menuAberto = false;
+let menuOpcao = document.getElementById(`opcao`);
+
+function abrirMenu(){
+    lojaMachado();
+    if(menuAberto){
+        menuOpcao.style.display = `none`;
+        menuAberto = false;
+       }else{
+        menuOpcao.style.display = `flex`;
+        menuAberto = true;
+       }
+    
+}
+
+let tipoLoja =document.getElementById(`categoria`);
+let item1 = document.getElementById(`item1`);
+let item2 = document.getElementById(`item2`);
+let item3 = document.getElementById(`item3`);
+function lojaMachado(){
+
+    tipoLoja.innerText = `Machados`;
+
+    item1.innerHTML = `Machado de madeira <b> ${item1Preco} Lenhas </b>`;
+
+    item2.innerHTML = `Machado de Pedra <b> ${item2Preco} Lenhas </b>`;
+
+    item3.innerHTML = `Machado de Diamante <b> ${item3Preco} Lenhas </b>`;
+}
+
+let machadoDeMadeira = false;
+let machadoDePedra = false;
+let machadoDeDiamante = false;
+let machadoEquipado = null;
+
+function comprarItem1(){
+    if(madeira>=item1Preco && !machadoDeMadeira ){
+        madeira -=item1Preco;
+        machadoDeMadeira = true;
+    }
+    if(machadoDeMadeira){
+        machadoEquipado = `machadoDeMadeira`;
+    }
+}
+
+function comprarItem2(){
+    if(madeira>=item2Preco && !machadoDePedra ){
+        madeira -=item2Preco;
+        machadoDePedra = true;
+    }
+    if(machadoDePedra){
+        machadoEquipado = `machadoDePedra`;
+    }
+}
+
+function comprarItem3(){
+    if(madeira>=item3Preco && !machadoDeDiamante ){
+        madeira -=item3Preco;
+        machadoDeDiamante = true;
+    }
+    if(machadoDeDiamante){
+        machadoEquipado = `machadoDeDiamante`;
+    }
+}
+
+
+
+
+
+setInterval(updateStatus, 1000);
 drawScene();
 update();

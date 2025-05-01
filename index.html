@@ -10,13 +10,14 @@
     <canvas id="canvas"></canvas>
     <section id="compras">
         <div id="menu">
-            <button id="menubotao" onclick="abrirMenu()">🏪</button>
+            <div id="status">Lenha: 0</div>
+            <button id="menubotao" onclick="abrirMenu()">Opções</button>
         </div>
         <div id="opcao">
-            <div id="categoria">Lista</div>
-            <div id="item1" class="itens">1</div>
-            <div id="item2" class="itens">2</div>
-            <div id="item3" class="itens">3</div>
+            <div id="categoria">Loja</div>
+            <div class="itens"><button onclick="comprarItem1()"  id="item1"></button></div>
+            <div class="itens"><button onclick="comprarItem2()"  id="item2"></button></div>
+            <div class="itens"><button onclick="comprarItem3()"  id="item3"></button></div>
         </div>
     </section>
     
